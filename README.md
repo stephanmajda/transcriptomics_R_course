@@ -107,7 +107,7 @@ summary(res)
 sum(res$padj < 0.05, na.rm=TRUE)
 ```
 The DESeq function does all the calculations for us. We only sort the results and filter with the significant threshold of 0.05.
-Fianly, we can output our results to a csv file:
+Finally, we can output our results to a csv file:
 ```
 write.csv(df,paste(c(sample_path,res,"_DESeq2_analysis_genes_only.csv"), sep = "",collapse=""), row.names = FALSE)
 ```
