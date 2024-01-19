@@ -37,7 +37,7 @@ calculation false discovery rate
 annotation
 ```
 
-## quantification and annotation
+## quantification, normalisation and annotation
 In the first step the abundance of each transcript or gene is counted. This is done by mapping the reads to the genome (or transcriptome).
 The result is a list of relative gene frequencies. 
 These lists must be loaded into the computer programme. As we have several files and do not want to set the path each time, we save it in a variable.(Alternative: setwd())
@@ -68,24 +68,46 @@ The programme needs to know how our experimental setup looks like. Therefore, we
 ```
 samps <- read.csv(paste(c(sample_path, "samples.csv"), sep = "",collapse=""),sep=",",header = TRUE)
 samps$condition <- factor(samps$condition)
+head(samps) 
 ```
 Now we can combine our annotation data with our qunatification files.
 ```
 # load abundance files
 files <- file.path(sample_path,samps$sample_id, "abundance.tsv", fsep="\\")
 names(files) <- samps$sample_id
-#head(files)   
+head(files)   
 txi <- tximport(files, type="kallisto", txOut=FALSE,tx2gene=txdf[,2:1],ignoreTxVersion=TRUE,
                 countsFromAbundance="scaledTPM")
 ```
-
-After that we can create DESeq2 object. DESeq2 is a tool for finding differential gene expression.
+In the variable "countsFromAbundance" we can specify which normalisation we want to use. 
+ 
+## filtering and statistics
+The next step is the creation of a DESeq2 object. DESeq2 is a tool for finding differential gene expression.
 ```
 dds <- DESeqDataSetFromTximport(txi,
                                    colData = samps,
-                                   design = ~condition1)
+                                   design = ~condition)
 ```
-## filtering
+The design formula represent the variable of interest e.g. treated vs no treatment.
 If you look at the list you will find genes with only 1-2 counts, these are probably random hits. In any case, the values are so low that it is difficult to make a meaningful statement about them.
+```
+# minimal filter
+keep <- rowSums(counts(dds)) >= 10
+dds <- dds[keep,]
+```
+For each gene should be in our example 10 hits.
+```
+dds$condition <- relevel(dds$condition, ref = "ND") # which level represents the control group e.g. WT
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+# Differential expression analysis
+dds <- DESeq(dds)
+res <- results(dds)
+resOrdered <- res[order(res$pvalue),]
+summary(res)
+sum(res$padj < 0.05, na.rm=TRUE)
+```
+The DESeq function does all the calculations for us. We only sort the results and filter with the significant threshold of 0.05.
+Fianly, we can output our results to a csv file:
+```
+write.csv(df,paste(c(sample_path,res,"_DESeq2_analysis_genes_only.csv"), sep = "",collapse=""), row.names = FALSE)
+```
