@@ -70,7 +70,7 @@ samps <- read.csv(paste(c(sample_path, "samples.csv"), sep = "",collapse=""),sep
 samps$condition <- factor(samps$condition)
 head(samps) 
 ```
-Now we can combine our annotation data with our qunatification files.
+Now we can combine our annotation data with our quantification files.
 ```
 # load abundance files
 files <- file.path(sample_path,samps$sample_id, "abundance.tsv", fsep="\\")
@@ -88,14 +88,14 @@ dds <- DESeqDataSetFromTximport(txi,
                                    colData = samps,
                                    design = ~condition)
 ```
-The design formula represent the variable of interest e.g. treated vs no treatment.
+The design formula represents the variable of interest e.g. treated vs no treatment.
 If you look at the list you will find genes with only 1-2 counts, these are probably random hits. In any case, the values are so low that it is difficult to make a meaningful statement about them.
 ```
 # minimal filter
 keep <- rowSums(counts(dds)) >= 10
 dds <- dds[keep,]
 ```
-For each gene should be in our example 10 hits.
+For each gene should be 10 hits in our example.
 ```
 dds$condition <- relevel(dds$condition, ref = "ND") # which level represents the control group e.g. WT
 
