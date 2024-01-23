@@ -97,7 +97,7 @@ dds <- dds[keep,]
 ```
 For each gene should be 10 hits in our example.
 ```
-dds$condition <- relevel(dds$condition, ref = "ND") # which level represents the control group e.g. WT
+dds$condition <- relevel(dds$condition, ref = "Sedentary") # which level represents the control group e.g. WT
 
 # Differential expression analysis
 dds <- DESeq(dds)
