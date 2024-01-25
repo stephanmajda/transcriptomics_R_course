@@ -19,6 +19,18 @@ library(GenomicFeatures)
 library(DESeq2)
 ```
 
+We can install most packages with:
+```
+install.packages()
+```
+sometimes we need packages located on not so well known location. Than we have to specify the installation command. e.g.:
+```
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("GenomicFeatures")
+```
+
 ## Pipline
 
 The term pipline is used when several tools or scripts are executed in sequential order. The advantage is that you do not have to manually forward the intermediate results for the next step between the programme steps.
