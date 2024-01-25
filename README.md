@@ -58,7 +58,7 @@ sample_path = "C:\\Users\\YOUR_USER_NAME\\Downloads\\PROJEKT_123\\data\\"
 ```
 At the same time, we want to add meta-information to our gene list, which allows us to link cryptic ensemble ids to trivial gene names. Link to gtf file: https://ftp.ensembl.org/pub/release-111/gtf/mus_musculus/
 ```
-gtf <- (paste(c(sample_path, Mus_musculus.GRCm39.110.chr.gtf.gz), sep = "",collapse="")
+gtf <- paste(c(sample_path, "Mus_musculus.GRCm39.110.chr.gtf.gz"), sep = "",collapse="")
 ```
 The paste function joins the path with the file. Then we load the file as an object. This object can be transformed to a data base.
 ```
